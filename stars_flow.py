@@ -1,5 +1,4 @@
 from prefect import flow, task
-from typing import list
 import httpx
 
 
@@ -18,4 +17,11 @@ def github_stars(repos: list[str]):
 
 # run the flow!
 if __name__=="__main__":
-    github_stars(["PrefectHQ/Prefect"])
+    github_stars.from_source(
+        "https://github.com/sam-phinizy/sam-prefect-testing.git",
+        entrypoint="stars_flow.py:github_stars"
+    ).deploy(
+        name="test-stars",
+        work_pool_name="test-docker",
+        build=False
+    )

@@ -2,7 +2,7 @@ import pandas as pd
 from prefect import flow, task
 from pydantic import BaseModel
 from pydantic import HttpUrl
-
+from typing import List
 
 class RegionCount(BaseModel):
     region_name: str
@@ -30,9 +30,14 @@ def main_flow():
 
 
 if __name__ == "__main__":
-    print(main_flow())
-
-
+    main_flow.from_source(
+        "https://github.com/sam-phinizy/sam-prefect-testing.git",
+        entrypoint="stars_flow.py:github_stars"
+    ).deploy(
+        name="test-stars",
+        work_pool_name="test-docker",
+        build=False
+    )
 
 
 
